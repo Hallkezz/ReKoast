@@ -264,7 +264,8 @@ end
 
 function Menu:Welcome()
     Network:Send( "SetRus" )
-	Welcome.Start = true
+	self:BackMe()
+	--Welcome.Start = true
 	self.hider = false
 	self.rus_image:Remove()
 	self.rus_button:Remove()

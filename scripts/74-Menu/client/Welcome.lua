@@ -33,10 +33,10 @@ function Welcome:Render()
 			Render:SetFont( AssetLocation.SystemFont, "Impact" )
 		end
 		Render:DrawText( Vector2( Render.Size.x / 3.4, Render.Size.x / 7 ), "Добро пожаловать!", Color.White, Render.Size.x / 40 )
-		Render:DrawText( Vector2( Render.Size.x / 5, Render.Size.x / 5 ), "Не удалось найти владельца, поддержка сервера может отсутствовать.\n\n" ..
-		"> Официальная группа проекта в VK - vk.com/rusjc\n" ..
-		"> Официальная группа проекта в Steam - steamcommunity.com/groups/rusjc\n" ..
-		"> Официальный канал проекта в Discord - discordapp.com/invite/64bq23s\n \n" ..
+		Render:DrawText( Vector2( Render.Size.x / 5, Render.Size.x / 5 ), ".\n\n" ..
+		"> Официальная группа проекта в VK - \n" ..
+		"> Официальная группа проекта в Steam - \n" ..
+		"> Официальный канал проекта в Discord - \n \n" ..
 		"Желаем вам приятной игры, наслаждайтесь :)", Color.White, Render.Size.x / 70 )
 		Render:DrawText( Vector2( 20, (Render.Height - 40) ), "© JCGTeam 2020", Color.White, 15 )
 	else
