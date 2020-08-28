@@ -351,7 +351,7 @@ function isOwner( player )
 		ownerstring = ownerstring .. line .. " "
 	end
 
-	if(string.match(ownerstring, tostring(player:GetSteamId()))) then
+	if (string.match(ownerstring, tostring(player:GetSteamId()))) then
 		return true
 	end
 
@@ -402,30 +402,14 @@ function Admin:PlayerChat( args )
     local cmd_args = args.text:split( " " )
 	sender = args.player
 
-	if args.player:GetValue("NT_TagName") then
-		if args.player:GetValue("NT_TagName") == "Наблюдатель" then
-			if (cmd_args[1]) == "/hidetag" then
-				if args.player:GetValue( "TagHide" ) then
-					Chat:Send( args.player, "[Сервер] ", Color.White, "Тэг над головой отключён.", Color( 124, 242, 0 ) )
-					args.player:SetNetworkValue( "TagHide", false )
-				else
-					Chat:Send( args.player, "[Сервер] ", Color.White, "Тэг над головой включён.", Color( 124, 242, 0 ) )
-					args.player:SetNetworkValue( "TagHide", true )
-				end
-			end
-		end
-	end
-
 	if (isOwner(args.player)) or (isGlAdmin(args.player)) or (isAdmin(args.player)) or (isAdminD(args.player)) or (isModerD(args.player)) then
-		if not args.player:GetValue("NT_TagName") then
-			if (cmd_args[1]) == "/hidetag" then
-				if args.player:GetValue( "TagHide" ) then
-					Chat:Send( args.player, "[Сервер] ", Color.White, "Тэг над головой отключён.", Color( 124, 242, 0 ) )
-					args.player:SetNetworkValue( "TagHide", false )
-				else
-					Chat:Send( args.player, "[Сервер] ", Color.White, "Тэг над головой включён.", Color( 124, 242, 0 ) )
-					args.player:SetNetworkValue( "TagHide", true )
-				end
+		if (cmd_args[1]) == "/hidetag" then
+			if args.player:GetValue( "TagHide" ) then
+				Chat:Send( args.player, "[Сервер] ", Color.White, "Тэг над головой отключён.", Color( 124, 242, 0 ) )
+				args.player:SetNetworkValue( "TagHide", false )
+			else
+				Chat:Send( args.player, "[Сервер] ", Color.White, "Тэг над головой включён.", Color( 124, 242, 0 ) )
+				args.player:SetNetworkValue( "TagHide", true )
 			end
 		end
 
