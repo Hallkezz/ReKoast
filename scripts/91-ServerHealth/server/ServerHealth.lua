@@ -59,11 +59,13 @@ function ServerHealth:GetOnline( args )
             players[p:GetId()] = p
             if args.text == "full" then
                 Events:Fire( "ToDiscordConsole", { text = "Players on server: " .. tostring( p ) })
+                print( "Players on server: " .. tostring( p ) )
             end
         end
     end
     if args.text ~= "full" then
         Events:Fire( "ToDiscordConsole", { text = "Online: " .. count })
+        print( "Online: " .. count )
     end
 end
 
