@@ -93,7 +93,7 @@ function Wingsuit:onFlyingRecord( score, player )
 	else
 		for p in Server:GetPlayers() do
 			if p:GetValue( "Lang" ) == "ENG" then
-				p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " updated a fantastic wingsuit record: " .. score .. "!", Color( 255, 150, 0 ) )
+				p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " updated a best wingsuit record: " .. score .. "!", Color( 255, 150, 0 ) )
 			else
 				p:SendChatMessage( "[Рекорд] ", Color.White, player:GetName() .. " обновил хорошечный рекорд по полётам на вингсьюте: " .. score .. "!", Color( 255, 150, 0 ) )
 			end
@@ -125,14 +125,14 @@ function Wingsuit:Reward( name, last )
 			else
 				player:SetMoney( player:GetMoney() + 500 )
 				if player:GetValue( "Lang" ) == "ENG" then
-					player:SendChatMessage( "[Record] ", Color.White, "You won a fantastic flying! Your reward: $500!", Color( 255, 150, 0 ) )
+					player:SendChatMessage( "[Record] ", Color.White, "You won a best flying! Your reward: $500!", Color( 255, 150, 0 ) )
 				else
 					player:SendChatMessage( "[Рекорд] ", Color.White, "Вы победили в полётах на вингсьюте! Ваша награда: $500!", Color( 255, 150, 0 ) )
 				end
 
 				for p in Server:GetPlayers() do
 					if p:GetValue( "Lang" ) == "ENG" then
-						p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " won a fantastic flying and won $500!", Color( 255, 150, 0 ) )
+						p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " won a best flying and won $500!", Color( 255, 150, 0 ) )
 					else
 						p:SendChatMessage( "[Рекорд] ", Color.White, player:GetName() .. " победил в полётах на вингсьюте и выиграл $500!", Color( 255, 150, 0 ) )
 					end

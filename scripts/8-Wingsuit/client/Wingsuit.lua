@@ -79,8 +79,8 @@ function Wingsuit:GetOption( args )
 end
 
 function Wingsuit:Lang( args )
-	self.tWidg = "Fantastic Flyihg:"
-	self.tWidgTw = "Fantastic "
+	self.tWidg = "Best Flyihg:"
+	self.tWidgTw = "Best "
 	self.tDrift = "Flying: "
 	self.tRecord = "Personal flying record: "
 end
