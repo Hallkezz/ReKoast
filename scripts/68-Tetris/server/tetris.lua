@@ -119,14 +119,14 @@ function ServerTetris:Reward( name, last )
 			else
 				player:SetMoney( player:GetMoney() + 500 )
 				if player:GetValue( "Lang" ) == "ENG" then
-					player:SendChatMessage( "[Record] ", Color.White, "You won a fantastic tetris! Your reward: $500!", Color( 255, 150, 0 ) )
+					player:SendChatMessage( "[Record] ", Color.White, "You won a best tetris! Your reward: $500!", Color( 255, 150, 0 ) )
 				else
 					player:SendChatMessage( "[Рекорд] ", Color.White, "Вы победили в хорошечном тетрисе! Ваша награда: $500!", Color( 255, 150, 0 ) )
 				end
 
 				for p in Server:GetPlayers() do
 					if p:GetValue( "Lang" ) == "ENG" then
-						p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " won a fantastic tetris and won $500!", Color( 255, 150, 0 ) )
+						p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " won a best tetris and won $500!", Color( 255, 150, 0 ) )
 					else
 						p:SendChatMessage( "[Рекорд] ", Color.White, player:GetName() .. " победил в хорошечном тетрисе и выиграл $500!", Color( 255, 150, 0 ) )
 					end

@@ -279,8 +279,8 @@ function Tetris:GetOption( args )
 end
 
 function Tetris:Lang( args )
-	self.tWidg = "Fantastic Tetris:"
-	self.tWidgTw = "Fantastic "
+	self.tWidg = "Best Tetris:"
+	self.tWidgTw = "Best "
 	self.tTetris = "Tetris: "
 	self.tRecord = "Personal tetris record: "
 	self.tDied = "GAME OVER\n\n\n\n"
