@@ -105,7 +105,7 @@ function Drift:onDriftRecord( score, player )
 	else
 		for p in Server:GetPlayers() do
 			if p:GetValue( "Lang" ) == "ENG" then
-				p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " updated a fantastic drift record: " .. score .. "!", Color( 255, 150, 0 ) )
+				p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " updated a best drift record: " .. score .. "!", Color( 255, 150, 0 ) )
 			else
 				p:SendChatMessage( "[Рекорд] ", Color.White, player:GetName() .. " обновил хорошечный рекорд по дрифту: " .. score .. "!", Color( 255, 150, 0 ) )
 			end
@@ -137,14 +137,14 @@ function Drift:Reward( name, last )
 			else
 				player:SetMoney( player:GetMoney() + 500 )
 				if player:GetValue( "Lang" ) == "ENG" then
-					player:SendChatMessage( "[Record] ", Color.White, "You won a fantastic drifter! Your reward: $500!", Color( 255, 150, 0 ) )
+					player:SendChatMessage( "[Record] ", Color.White, "You won a best drifter! Your reward: $500!", Color( 255, 150, 0 ) )
 				else
 					player:SendChatMessage( "[Рекорд] ", Color.White, "Вы победили в хорошечном дрифтере! Ваша награда: $500!", Color( 255, 150, 0 ) )
 				end
 
 				for p in Server:GetPlayers() do
 					if p:GetValue( "Lang" ) == "ENG" then
-						p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " won a fantastic drifter and won $500!", Color( 255, 150, 0 ) )
+						p:SendChatMessage( "[Record] ", Color.White, player:GetName() .. " won a best drifter and won $500!", Color( 255, 150, 0 ) )
 					else
 						p:SendChatMessage( "[Рекорд] ", Color.White, player:GetName() .. " победил в хорошечном дрифтере и выиграл $500!", Color( 255, 150, 0 ) )
 					end

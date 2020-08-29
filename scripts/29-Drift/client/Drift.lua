@@ -31,8 +31,8 @@ function Drift:GetOption( args )
 end
 
 function Drift:Lang( args )
-	self.tWidg = "Fantastic Drift:"
-	self.tWidgTw = "Fantastic "
+	self.tWidg = "Best Drift:"
+	self.tWidgTw = "Best "
 	self.tDrift = "Drift: "
 	self.tDriftTw = "Drift: "
 	self.tDrift3 = "Well done! "
