@@ -5,7 +5,6 @@ function Menu:__init()
 	self.minimapfix = true
 	self.freeroam = false
 	self.hider = true
-	self.god = false
 	LocalPlayer:SetValue( "Menu", true )
 	self:LoadImages()
 
@@ -253,6 +252,9 @@ function Menu:Close()
 	end
 	Game:FireEvent( "ply.unpause" )
 	Game:FireEvent( "gui.hud.show" )
+	if LocalPlayer:GetValue( "Passive" ) then
+		Game:FireEvent( "ply.invulnerable" )
+	end
 	Events:Fire( "CastCenterText", { text = self.tofreeroamtext, time = 2, color = Color( 255, 255, 255 ) } )
 	Network:Send( "SetFreeroam" )
 	LocalPlayer:SetValue( "Menu", false )
