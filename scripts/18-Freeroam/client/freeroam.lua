@@ -34,7 +34,6 @@ function Freeroam:LocalPlayerInput( args )
 end
 
 function Freeroam:GameLoad( args )
-	Game:FireEvent( "ply.health.upgrade" )
 	if self.spawn then
 		Network:Send( "PlayerSpawn" )
 		self.spawn = false
