@@ -2,7 +2,7 @@ class 'Menu'
 
 function Menu:__init()
 	self.pos = Vector2( 20, 40 )
-	self.upgrade = true
+	self.minimapfix = true
 	self.freeroam = false
 	self.hider = true
 	self.god = false
@@ -133,7 +133,7 @@ function Menu:Open()
 	if not self.EventRender then
 		self.EventRender = Events:Subscribe( "Render", self, self.Render )
 	end
-	self.upgrade = false
+	self.minimapfix = false
 
 	if LocalPlayer:GetValue( "Tag" ) == "Owner" then
 		self.status = "  [Владелец]"
@@ -200,8 +200,6 @@ function Menu:Render()
 			self.eng_button:SetVisible( true )
 			if LocalPlayer:GetValue( "SystemFonts" ) then
 				self.rus_button:SetFont( AssetLocation.SystemFont, "Impact" )
-			end
-			if LocalPlayer:GetValue( "SystemFonts" ) then
 				self.eng_button:SetFont( AssetLocation.SystemFont, "Impact" )
 			end
 		else
@@ -213,10 +211,10 @@ function Menu:Render()
 	end
 
 	if self.active then
-		if self.upgrade then
-			Game:FireEvent( "ply.health.upgrade" )
+		if self.minimapfix then
+			Game:FireEvent( "gui.minimap.hide" )
 		end
-		if LocalPlayer:GetValue( "KoastBuild" ) then
+		if LocalPlayer:GetValue( "KoastBuild" ) and LocalPlayer:GetValue( "KoastBuild" ) ~= "" then
 			Render:DrawText( pos8, LocalPlayer:GetValue( "KoastBuild" ), Color.White, 15 )
 		end
 		local position = Vector2( 20, Render.Height * 0.40 )
