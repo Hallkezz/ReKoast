@@ -5,7 +5,7 @@ function Logo:__init()
 		Events:Subscribe( "Render", self, self.Render )
 	end
 
-	if LocalPlayer:GetValue( "KoastBuild" ) then
+	if LocalPlayer:GetValue( "KoastBuild" ) and LocalPlayer:GetValue( "KoastBuild" ) ~= "" then
 		print( "ReKoast-mod v" .. LocalPlayer:GetValue( "KoastBuild" ) .. " loaded." )
 	else
 		print( "ReKoast-mod loaded." )
