@@ -16,7 +16,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=576213539
 3. Перезапустите модуль (reload 2-AdminSystem в консоль сервера).
 
 Как изменить лого сервера?
-1. Перейдите в scripts/0-ServerInfo/server/
+1. Перейдите в scripts/0-ServerInfo/
 2. Откройте servername.txt и впишите название своего сервера (Если не хотите логотип, оставьте всё пустым).
 
 Как вписать свои правила?
