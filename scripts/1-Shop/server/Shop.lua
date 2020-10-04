@@ -247,16 +247,20 @@ function Shop:BuyVehicle( player, item, tone1, tone2 )
 			return false, "У вас отсутствует VIP статус!", Network:Send( player, "NoVipText" )
 		end
 	end
-	
+
+	if not player:HasVehicleDLC(item:GetModelId()) then
+		return false, "У вас отсутствует DLC!"
+	end
+
+	if player:GetState() == PlayerState.InVehiclePassenger then
+        return false, "Вы не можете заказать транспорт на пассажирском месте!"
+	end
+
 	self:ExecuteVehicle( player, item, tone1, tone2 )
     return true, ""	--	Return true must be right after the execution else the confirmation message gives an error.
 end
 
-function Shop:ExecuteVehicle( player, item, tone1, tone2 )		
-    if player:GetState() == PlayerState.InVehiclePassenger then
-        return false, player:SendErrorMessage( "Вы не можете заказать транспорт на пассажирском месте!" )
-    end
-
+function Shop:ExecuteVehicle( player, item, tone1, tone2 )
     if player:InVehicle() == true then
 			if IsValid( self.vehicles[ player:GetId() ] ) and player:GetVehicle() == self.vehicles[ player:GetId() ] then
 				player:GetVehicle():Remove()
@@ -323,6 +327,11 @@ function Shop:BuyWeapon( player, item )
 			return false, "У вас отсутствует VIP статус!", Network:Send( player, "NoVipText" )
 		end
 	end
+
+	if not player:HasWeaponDLC(item:GetModelId()) then
+		return false, "У вас отсутствует DLC!"
+	end
+
 	self:ExecuteWeapon( player, item )
     return true, ""	--	Return true must be right after the execution else the confirmation message gives an error.
 end
