@@ -1,7 +1,7 @@
 class 'Version'
 
 function Version:__init()
-    self.ver = "1.0"
+    self.ver = ""
     self.sname = ""
 
     self:GetServerName()
@@ -32,7 +32,7 @@ function Version:ModuleLoad( args )
 end
 
 function Version:GetServerName()
-    local file = io.open("server/servername.txt", "r")
+    local file = io.open("servername.txt", "r")
     s = file:read("*a")
 
     if s then
