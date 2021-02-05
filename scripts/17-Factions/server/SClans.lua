@@ -72,16 +72,6 @@ function ClanSystem:__init()
 					delete = false,
 					clearLog = false
 				},
-			[ "Петух" ] =
-				{
-					kick = false,
-					invite = false,
-					motd = false,
-					setRank = false,
-					changeSettings = false,
-					delete = false,
-					clearLog = false
-				},
 		}
 
 	for player in Server:GetPlayers() do
