@@ -275,6 +275,10 @@ end
 
 function Freeroam:PlayerSpawnAndPassive( args, sender )
     sender:SetNetworkValue( "Passive", args.pvalue )
+    local vehicle = sender:GetVehicle()
+    if IsValid(vehicle) and vehicle:GetDriver() == sender then
+        vehicle:SetInvulnerable( false )
+    end
 end
 
 
