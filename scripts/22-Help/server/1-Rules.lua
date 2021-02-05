@@ -5,7 +5,7 @@ function HRules:__init()
 end
 
 function HRules:GetRules( args, sender )
-	local getrulesfile = io.open("server/rules.txt", "r")
+	local getrulesfile = io.open("rules.txt", "r")
 	s = getrulesfile:read("*a")
 
 	if s then
