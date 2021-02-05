@@ -26,7 +26,7 @@ function HControls:EngHelp()
 				"    'B'               Open Server Menu.\n" ..
 				"    'G'               Grenades Selector.\n" ..
 				"    'V'               The teleport menu.\n" ..
-                "    'Shift' 2x      Enable Pigeon-Mod.\n" ..
+                                "    'Q'               Use Wingsuit.\n" ..
 				"    'L'               Open the door of military bases.\n \n" ..
 				"> Vehicles:\n" ..
 				"    'X'               Hand brake.\n" ..
@@ -67,7 +67,7 @@ function HControls:ModulesLoad()
 				"    'B'                Открыть меню сервера.\n" ..
 				"    'G'                Сменить взрывчатку.\n" ..
 				"    'V'                Меню телепортации.\n" ..
-                "    'Shift' 2x     Включить голубь-мод.\n" ..
+                                "    'Q'                Использовать вингсьют.\n" ..
 				"    'L'                 Открыть ворота военных баз.\n \n" ..
 				"> Транспорт:\n" ..
 				"    'X'               Ручной тормоз.\n" ..
