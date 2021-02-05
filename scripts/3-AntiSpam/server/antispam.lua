@@ -2,9 +2,7 @@ class "AntiSpam"
 
 function AntiSpam:__init()
 	self.kickMessage = "был кикнут за флуд :("
-	self.kickReason = "\n\nВы были отключены системой Анти-Флуд.\n\n" .. 
-					"Кикнуло просто так? - Возможо у вас привязаны команды к клавишам. Ипользуйте /unbindall, чтобы отвязать их.\n\n" ..
-					"Поддержка в ВК - vk.com/rusjc\nПоддержка в Steam - steamcommunity.com/groups/rusjc\nПоддержка в Дисководе - discord.gg/64bq23s"
+	self.kickReason = "\n\nВы были отключены системой Анти-Флуд."
 	self.messageColor = Color( 255, 0, 0 )
 	self.maxWarnings = 2
 	self.messagesResetInterval = 5
