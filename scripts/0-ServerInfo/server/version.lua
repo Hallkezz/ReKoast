@@ -1,7 +1,7 @@
 class 'Version'
 
 function Version:__init()
-    self.ver = ""
+    self.ver = "050221.0"
     self.sname = ""
 
     self:GetServerName()
