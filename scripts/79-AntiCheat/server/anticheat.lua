@@ -13,7 +13,7 @@ function GodCheck:__init()
 	Network:Subscribe( "SuspicionLevel", self, self.SuspicionLevel )
 	Network:Subscribe( "CheckThisPlayer", self, self.CheckThisPlayer )
 	Network:Subscribe( "ItsCheater", self, self.ItsCheater )
-    Network:Subscribe( "LagCheck", self, self.LagCheck )
+        Network:Subscribe( "LagCheck", self, self.LagCheck )
 	Network:Subscribe( "Speedhack", self, self.Speedhack )
 
 	Events:Subscribe( "PlayerQuit", self, self.PlayerQuit )
