@@ -150,57 +150,7 @@ function Wingsuit:LocalPlayerInput( args )
 	if Game:GetState() ~= GUIState.Game then return end
 	if LocalPlayer:GetWorld() ~= DefaultWorld then return end
 	if self.activ then
-		if Input:GetValue(Action.EquipLeftSlot) > 0 and not self.subs.camera and not LocalPlayer:GetVehicle() then
-			if Game:GetSetting(GameSetting.GamepadInUse) == 1 then
-				local bs = LocalPlayer:GetBaseState()
-				if self.blacklist.animations[bs] then return end
-
-				if not self.timers.activate or self.timers.activate:GetMilliseconds() > 300 then
-					self.timers.activate = Timer()
-				elseif self.timers.activate:GetMilliseconds() < 500 then
-					self.timers.activate = nil
-
-					if self.whitelist.animations[bs] then
-						self.timers.camera_start = Timer()
-						self.speed = self.default_speed
-						-- self.camera = 1
-						LocalPlayer:SetBaseState(AnimationState.SSkydive)
-						LocalPlayer:SetValue( "Wingsuit", true )
-						self.subs.wings = Events:Subscribe( "GameRenderOpaque", self, self.DrawWings )
-						self.subs.velocity = Events:Subscribe( "Render", self, self.SetVelocity )
-						self.subs.camera = Events:Subscribe( "CalcView", self, self.Camera )
-						self.subs.glide = Events:Subscribe( "InputPoll", self, self.Glide )
-						self.subs.input = Events:Subscribe( "LocalPlayerInput", self, self.Input )
-					elseif self.superman then
-						local timer = Timer()
-						self.timers.camera_start = Timer()
-						self.speed = self.default_speed
-						-- self.camera = 1
-						self.subs.camera = Events:Subscribe( "CalcView", self, self.Camera )
-						self.subs.input = Events:Subscribe( "LocalPlayerInput", self, self.Input )
-						self.subs.wings = Events:Subscribe( "GameRenderOpaque", self, self.DrawWings )
-						self.subs.delay = Events:Subscribe( "PreTick", function()
-							local dt = timer:GetMilliseconds()
-							LocalPlayer:SetBaseState(AnimationState.SSkydive)
-							LocalPlayer:SetLinearVelocity( LocalPlayer:GetAngle() * math.lerp( Vector3( 0, self.speed, 0 ), Vector3( 0, 0, -self.speed ), dt / 1000) )
-							if dt > 1000 then
-								Events:Unsubscribe( self.subs.delay )
-								self.subs.delay = nil
-								self.subs.velocity = Events:Subscribe( "Render", self, self.SetVelocity )
-							end
-						end )
-					end
-				end
-			end
-		end
-	end
-end
-
-function Wingsuit:Activate( args )
-	if Game:GetState() ~= GUIState.Game then return end
-	if LocalPlayer:GetWorld() ~= DefaultWorld then return end
-	if self.activ then
-		if args.key == VirtualKey.Shift and not self.subs.camera and not LocalPlayer:GetVehicle() then
+		if Input:GetValue(Action.Kick) > 0 and not self.subs.camera and not LocalPlayer:GetVehicle() then
 			local bs = LocalPlayer:GetBaseState()
 			if self.blacklist.animations[bs] then return end
 
@@ -243,7 +193,15 @@ function Wingsuit:Activate( args )
 					end )
 				end
 			end
-		elseif args.key == VirtualKey.Control and self.subs.camera and not self.timers.camera_start and not self.timers.camera_stop then
+		end
+	end
+end
+
+function Wingsuit:Activate( args )
+	if Game:GetState() ~= GUIState.Game then return end
+	if LocalPlayer:GetWorld() ~= DefaultWorld then return end
+	if self.activ then
+		if args.key == VirtualKey.Control and self.subs.camera and not self.timers.camera_start and not self.timers.camera_stop then
 			if not self.timers.activate or self.timers.activate:GetMilliseconds() > 300 then
 				self.timers.activate = Timer()
 			elseif self.timers.activate:GetMilliseconds() < 500 then
