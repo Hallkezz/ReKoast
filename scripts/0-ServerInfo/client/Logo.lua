@@ -6,7 +6,7 @@ function Logo:__init()
 	end
 
 	if LocalPlayer:GetValue( "KoastBuild" ) and LocalPlayer:GetValue( "KoastBuild" ) ~= "" then
-		print( "ReKoast-mod v" .. LocalPlayer:GetValue( "KoastBuild" ) .. " loaded." )
+		print( "ReKoast-mod Build:" .. LocalPlayer:GetValue( "KoastBuild" ) .. " loaded." )
 	else
 		print( "ReKoast-mod loaded." )
 	end
