@@ -314,7 +314,6 @@ function ClanSystem:ModuleLoad()
 	self.manageClan.ranks:AddItem( "Заместитель" )
 	self.manageClan.ranks:AddItem( "Редактор" )
 	self.manageClan.ranks:AddItem( "Участник" )
-	self.manageClan.ranks:AddItem( "Петух" )
 
 	self.manageClan.kick = Button.Create( self.manageClan.psettLabel )
 	self.manageClan.kick:SetDock( GwenPosition.Top )
