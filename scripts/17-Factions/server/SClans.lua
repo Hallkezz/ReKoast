@@ -9,6 +9,7 @@ msgColors =
 
 function ClanSystem:__init()
 	self.op = 10000
+	self.op2 = 1000
 	self.getclantag = ""
 
 	self.LastTick = 0
@@ -25,8 +26,9 @@ function ClanSystem:__init()
 				{
 					kick = true,
 					invite = true,
+					motd = true,
 					setRank = true,
-					setMotd = true,
+					changeSettings = true,
 					delete = true,
 					clearLog = true
 				},
@@ -34,8 +36,9 @@ function ClanSystem:__init()
 				{
 					kick = true,
 					invite = true,
+					motd = true,
 					setRank = true,
-					setMotd = true,
+					changeSettings = true,
 					delete = false,
 					clearLog = true
 				},
@@ -43,8 +46,19 @@ function ClanSystem:__init()
 				{
 					kick = true,
 					invite = true,
+					motd = true,
 					setRank = false,
-					setMotd = false,
+					changeSettings = false,
+					delete = false,
+					clearLog = false
+				},
+			[ "Редактор" ] =
+				{
+					kick = false,
+					invite = true,
+					motd = true,
+					setRank = false,
+					changeSettings = false,
 					delete = false,
 					clearLog = false
 				},
@@ -52,8 +66,9 @@ function ClanSystem:__init()
 				{
 					kick = false,
 					invite = true,
+					motd = false,
 					setRank = false,
-					setMotd = false,
+					changeSettings = false,
 					delete = false,
 					clearLog = false
 				},
@@ -61,8 +76,9 @@ function ClanSystem:__init()
 				{
 					kick = false,
 					invite = false,
+					motd = false,
 					setRank = false,
-					setMotd = false,
+					changeSettings = false,
 					delete = false,
 					clearLog = false
 				},
@@ -84,13 +100,15 @@ function ClanSystem:__init()
 	Network:Subscribe ( "Clans:Kick", self, self.KickPlayer )
 	Network:Subscribe ( "Clans:SetRank", self, self.SetPlayerRank )
 	Network:Subscribe ( "Clans:RequestSyncList", self, self.SendPlayerList )
-	Network:Subscribe ( "Clans:UpdateMOTD", self, self.UpdateMOTD )
+	Network:Subscribe ( "Clans:UpdateClanSettings", self, self.UpdateClanSettings )
+	Network:Subscribe ( "Clans:UpdateClanNews", self, self.UpdateClanNews )
 	Network:Subscribe ( "Clans:ClearLog", self, self.ClearLog )
 	Events:Subscribe ( "PlayerChat",  self, self.FactionChat )
 	Events:Subscribe ( "PostTick", self, self.SyncPlayers )
+	Events:Subscribe ( "PlayerJoin", self, self.PlayerJoin )
 	Events:Subscribe ( "PlayerQuit", self, self.PlayerQuit )
 
-	SQL:Execute ( "CREATE TABLE IF NOT EXISTS clans ( name VARCHAR UNIQUE, creator VARCHAR, tag VARCHAR, colour VARCHAR, creationDate VARCHAR, type VARCHAR, motd VARCHAR )" )
+	SQL:Execute ( "CREATE TABLE IF NOT EXISTS clans ( name VARCHAR UNIQUE, steamID VARCHAR, creator VARCHAR, description VARCHAR, colour VARCHAR, creationDate VARCHAR, type VARCHAR, clannews VARCHAR )" )
 	SQL:Execute ( "CREATE TABLE IF NOT EXISTS clan_members ( steamID VARCHAR UNIQUE, clan VARCHAR, name VARCHAR, rank VARCHAR, joinDate VARCHAR )" )
 	SQL:Execute ( "CREATE TABLE IF NOT EXISTS clan_messages ( clan VARCHAR, type VARCHAR, message VARCHAR, date VARCHAR )" )
 
@@ -101,12 +119,13 @@ function ClanSystem:__init()
 			self.clans [ clan.name ] =
 				{
 					name = clan.name,
+					steamID = clan.steamID,
 					creator = clan.creator,
-					tag = clan.tag,
+					description = clan.description,
 					colour = clan.colour,
 					creationDate = clan.creationDate,
 					type = clan.type,
-					motd = clan.motd
+					clannews = clan.clannews
 				}
 			self.clanMembers [ clan.name ] = {}
 			self.clanMessages [ clan.name ] = {}
@@ -145,13 +164,32 @@ function ClanSystem:__init()
 					{
 						clan = msg.clan,
 						type = msg.type,
-						message = msg.message
+						message = msg.message,
+						date = msg.date
 					}
 				)
 			end
 		end
 	end
 	print ( tostring ( #result ) .." faction message(s) loaded!" )
+end
+
+function ClanSystem:PlayerJoin( args )
+	local clan = self:GetPlayerClan ( args.player )
+	if ( clan ) then
+		local memberRank = self:GetMemberData ( { steamID = args.player:GetSteamId().id, data = "rank" } )
+		if ( memberRank ) then
+			if ( memberRank == "Основатель" ) then
+				local transaction = SQL:Transaction()
+				local query = SQL:Command( "UPDATE clans SET steamID = ?, creator = ? WHERE name = (?)" )
+				query:Bind( 1, args.player:GetSteamId().id )
+				query:Bind( 2, args.player:GetName() )
+				query:Bind( 3, clan )
+				query:Execute()
+				transaction:Commit()
+			end
+		end
+	end
 end
 
 function ClanSystem:PlayerQuit( args )
@@ -188,29 +226,33 @@ function ClanSystem:AddClan( args, player )
 	if (player:GetMoney() >= self.op) then
 		player:SetMoney(player:GetMoney() - self.op)
 	else
-		player:Message ( "Вам нужно как минимум $" .. self.op .. ", чтобы создать клан.", "err" )
+		player:Message( "Требуется $" .. self.op .. ", чтобы создать клан.", "err" )
 		return false
 	end	
 
 	if ( not self:Exists ( args.name ) ) then
-		local theDate = os.date ( "%c" )
-		local cmd = SQL:Command ( "INSERT INTO clans ( name, creator, tag, colour, creationDate, type ) VALUES ( ?, ?, ?, ?, ?, ? )" )
+		local theDate = os.date ( "%d/%m/%y %X" )
+		local newsdefault = "Поздравляем, клан успешно создан! Здесь будут отображаться новости для всех участников клана. Зайдите в настройки клана, чтобы изменить это сообщение."
+		local cmd = SQL:Command ( "INSERT INTO clans ( name, steamID, creator, description, colour, creationDate, type, clannews ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" )
 		cmd:Bind ( 1, args.name )
-		cmd:Bind ( 2, player:GetSteamId ( ).id )
-		cmd:Bind ( 3, args.tag )
-		cmd:Bind ( 4, args.colour )
-		cmd:Bind ( 5, theDate )
-		cmd:Bind ( 6, args.type )
+		cmd:Bind ( 2, player:GetSteamId().id )
+		cmd:Bind ( 3, player:GetName() )
+		cmd:Bind ( 4, args.description )
+		cmd:Bind ( 5, args.colour )
+		cmd:Bind ( 6, theDate )
+		cmd:Bind ( 7, args.type )
+		cmd:Bind ( 8, newsdefault )
 		cmd:Execute ( )
 		self.clans [ args.name ] =
 			{
 				name = args.name,
-				creator = player:GetSteamId ( ).id,
-				tag = args.tag,
+				steamID = player:GetSteamId().id,
+				creator = player:GetName(),
+				description = args.description,
 				colour = args.colour,
 				creationDate = theDate,
 				type = args.type,
-				motd = ""
+				clannews = newsdefault
 			}
 		self.clanMembers [ args.name ] = { }
 		Chat:Broadcast ( player:GetName() .. " создал клан ".. tostring ( args.name ) .."!", Color( 0, 255, 220 ))
@@ -234,11 +276,6 @@ function ClanSystem:RemoveClan( _, player )
 	if ( name ) then
 		if self:IsPlayerAllowedTo ( { player = player, action = "delete" } ) then
 			if self:Exists ( name ) then
-				if(player:GetMoney() >= 0) then
-				    if not player:GetValue( "Creator" ) or player:GetValue( "GlAdmin" ) or player:GetValue( "Admin" ) then
-						player:SetMoney( player:GetMoney() + 5000 )
-					end
-				end
 				local cmd = SQL:Command ( "DELETE FROM clans WHERE name = ( ? )" )
 				cmd:Bind ( 1, name )
 				cmd:Execute ( )
@@ -265,20 +302,20 @@ function ClanSystem:RemoveClan( _, player )
 end
 
 function ClanSystem:AddMember( args )
-	local theDate = os.date ( "%c" )
+	local theDate = os.date( "%d/%m/%y %X" )
 	local cmd = SQL:Command ( "INSERT INTO clan_members ( steamID, clan, name, rank, joinDate ) VALUES ( ?, ?, ?, ?, ? )" )
-	cmd:Bind ( 1, args.player:GetSteamId ( ).id )
-	cmd:Bind ( 2, args.clan )
-	cmd:Bind ( 3, args.player:GetName ( ) )
-	cmd:Bind ( 4, args.rank )
-	cmd:Bind ( 5, theDate )
-	cmd:Execute ( )
+	cmd:Bind( 1, args.player:GetSteamId().id )
+	cmd:Bind( 2, args.clan )
+	cmd:Bind( 3, args.player:GetName() )
+	cmd:Bind( 4, args.rank )
+	cmd:Bind( 5, theDate )
+	cmd:Execute()
 	table.insert (
 		self.clanMembers [ args.clan ],
 		{
-			steamID = args.player:GetSteamId ( ).id,
+			steamID = args.player:GetSteamId().id,
 			clan = args.clan,
-			name = args.player:GetName ( ),
+			name = args.player:GetName(),
 			rank = args.rank,
 			joinDate = theDate
 		}
@@ -292,7 +329,7 @@ function ClanSystem:AddMember( args )
 		local pName = args.player:GetName ( )
 		local colour = ( self.clans [ clan ].colour:split ( "," ) or { 255, 255, 255 } )
 		local r, g, b = table.unpack ( colour )
-		for player in Server:GetPlayers ( ) do
+		for player in Server:GetPlayers() do
 			local pClan = self:GetPlayerClan ( player )
 			if ( pClan ) then
 				if ( pClan == clan ) then
@@ -334,13 +371,14 @@ end
 function ClanSystem:GetData( _, player )
 	local clan = self:GetPlayerClan ( player )
 	if ( clan ) then
-		local args = { }
+		local args = {}
 		args.members = self.clanMembers [ clan ]
 		args.clanData = self.clans [ clan ]
 		args.messages = self.clanMessages [ clan ]
-		Network:Send ( player, "Clans:ReceiveData", args )
+		args.newstext = self.clans [ clan ].clannews
+		Network:Send( player, "Clans:ReceiveData", args )
 	else
-		player:Message ( "Вы не в клане!", "err" )
+		player:Message( "Вы не в клане!", "err" )
 	end
 end
 
@@ -351,7 +389,7 @@ function ClanSystem:LeaveClan( _, player )
 		local member = self.clanMembers [ clan ] [ index ]
 		if ( member ) then
 			if ( member.steamID == steamID ) then
-				if ( member.rank ~= "Основатель" ) or player:GetValue( "Creator" ) or player:GetValue( "GlAdmin" ) or player:GetValue( "Admin" ) then
+				if ( member.rank ~= "Основатель" ) or player:GetValue( "Tag" ) == "Creator" or player:GetValue( "Tag" ) == "GlAdmin" or player:GetValue( "Tag" ) == "Admin" then
 					local args = { }
 					args.clan = clan
 					args.steamID = steamID
@@ -461,8 +499,8 @@ function ClanSystem:JoinClan( clan, player )
 	if self:Exists ( clan ) then
 		local pClan = self:GetPlayerClan ( player )
 		if ( not pClan ) then
-			if ( self.clans [ clan ].type == "Открытый" ) or player:GetValue( "Creator" ) or player:GetValue( "GlAdmin" ) or player:GetValue( "Admin" ) then
-				if player:GetValue( "Creator" ) or player:GetValue( "GlAdmin" ) or player:GetValue( "Admin" ) then
+			if ( self.clans [ clan ].type == "Открытый" ) or player:GetValue( "Tag" ) == "Creator" or player:GetValue( "Tag" ) == "GlAdmin" or player:GetValue( "Tag" ) == "Admin" then
+				if player:GetValue( "Tag" ) == "Creator" or player:GetValue( "Tag" ) == "GlAdmin" or player:GetValue( "Tag" ) == "Admin" then
 					self:AddMember (
 						{
 							player = player,
@@ -525,8 +563,8 @@ function ClanSystem:SetPlayerRank( args, player )
 		if self:IsPlayerAllowedTo ( { player = player, action = "setRank" } ) then
 			local memberRank = self:GetMemberData ( { steamID = args.steamID, data = "rank" } )
 			if ( memberRank ) then
-				if ( memberRank ~= "Основатель" ) or player:GetValue( "Creator" ) or player:GetValue( "GlAdmin" ) or player:GetValue( "Admin" ) then
-					if ( memberRank ~= myRank ) or player:GetValue( "Creator" ) or player:GetValue( "GlAdmin" ) or player:GetValue( "Admin" ) then
+				if ( memberRank ~= "Основатель" ) or player:GetValue( "Tag" ) == "Creator" or player:GetValue( "Tag" ) == "GlAdmin" or player:GetValue( "Tag" ) == "Admin" then
+					if ( memberRank ~= myRank ) or player:GetValue( "Tag" ) == "Creator" or player:GetValue( "Tag" ) == "GlAdmin" or player:GetValue( "Tag" ) == "Admin" then
 						if ( memberRank ~= args.rank ) then
 							if self:SetMemberData ( { steamID = args.steamID, data = "rank", value = args.rank } ) then
 								self:GetData ( nil, player )
@@ -630,7 +668,7 @@ function ClanSystem:AddMessage( clan, type, msg )
 		cmd:Bind ( 1, clan )
 		cmd:Bind ( 2, type )
 		cmd:Bind ( 3, msg )
-		cmd:Bind ( 4, os.date ( "%c" ) )
+		cmd:Bind ( 4, os.date ( "%d/%m/%y %X" ) )
 		cmd:Execute ( )
 		if ( not self.clanMessages [ clan ] ) then
 			self.clanMessages [ clan ] = { }
@@ -640,7 +678,8 @@ function ClanSystem:AddMessage( clan, type, msg )
 			{
 				clan = clan,
 				type = type,
-				message = msg
+				message = msg,
+				date = os.date ( "%d/%m/%y %X" )
 			}
 		)
 	end
@@ -675,19 +714,50 @@ function ClanSystem:FactionChat( args )
 	end
 end
 
-function ClanSystem:UpdateMOTD( text, player )
+function ClanSystem:UpdateClanSettings( args, player )
 	local clan = self:GetPlayerClan ( player )
 	if ( clan ) then
-		if self:IsPlayerAllowedTo ( { player = player, action = "setMotd" } ) then
-			local transaction = SQL:Transaction ( )
-			local query = SQL:Command ( "UPDATE clans SET motd = ? WHERE name = ?" )
-			query:Bind ( 1, text )
-			query:Bind ( 2, clan )
-			query:Execute ( )
-			transaction:Commit ( )
-			self:SetClanData ( clan, "motd", text )
-			player:Message ( "MOTD успешно обновлено.", "info" )
-			self:AddMessage ( clan, "log", player:GetName ( ) .." обновил клану MOTD." )
+		if self:IsPlayerAllowedTo ( { player = player, action = "changeSettings" } ) then
+			if (player:GetMoney() >= self.op2) then
+				player:SetMoney(player:GetMoney() - self.op2)
+			else
+				player:Message( "Требуется $" .. self.op2 .. ", чтобы изменить настройки клана.", "err" )
+				return false
+			end	
+			local transaction = SQL:Transaction()
+			local query = SQL:Command( "UPDATE clans SET description = ?, colour = ?, type = ? WHERE name = (?)" )
+			query:Bind( 1, args.description )
+			query:Bind( 2, args.colour )
+			query:Bind( 3, args.type )
+			query:Bind( 4, clan )
+			query:Execute()
+			transaction:Commit()
+			self:SetClanData ( clan, "description", args.description )
+			self:SetClanData ( clan, "colour", args.colour )
+			self:SetClanData ( clan, "type", args.type )
+			player:Message ( "Настройки клана успешно изменены.", "info" )
+			self:AddMessage ( clan, "log", player:GetName() .." обновил настройки клана." )
+		else
+			player:Message ( "Вы не можете использовать эту функцию!", "err" )
+		end
+	else
+		player:Message ( "Вы не в клане!", "err" )
+	end
+end
+
+function ClanSystem:UpdateClanNews( args, player )
+	local clan = self:GetPlayerClan ( player )
+	if ( clan ) then
+		if self:IsPlayerAllowedTo ( { player = player, action = "motd" } ) then
+			local transaction = SQL:Transaction()
+			local query = SQL:Command( "UPDATE clans SET clannews = ? WHERE name = (?)" )
+			query:Bind( 1, args.clannews )
+			query:Bind( 2, clan )
+			query:Execute()
+			transaction:Commit()
+			self:SetClanData ( clan, "clannews", args.clannews )
+			player:Message ( "Сообщение дня успешно изменено.", "info" )
+			self:AddMessage ( clan, "log", player:GetName() .." обновил сообщение дня." )
 		else
 			player:Message ( "Вы не можете использовать эту функцию!", "err" )
 		end
