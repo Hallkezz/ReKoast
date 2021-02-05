@@ -38,7 +38,7 @@ function Welcome:Render()
 		"> Официальная группа проекта в Steam - \n" ..
 		"> Официальный канал проекта в Discord - \n \n" ..
 		"Желаем вам приятной игры, наслаждайтесь :)", Color.White, Render.Size.x / 70 )
-		Render:DrawText( Vector2( 20, (Render.Height - 40) ), "© JCGTeam 2020", Color.White, 15 )
+		Render:DrawText( Vector2( 20, (Render.Height - 40) ), "© JCGTeam 2021", Color.White, 15 )
 	else
 		if self.offline then
 			self.Menu_button:SetVisible( false )
