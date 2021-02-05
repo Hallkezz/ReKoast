@@ -2,7 +2,6 @@ class 'ServerMenu'
 
 function ServerMenu:__init()
 	self.active = false
-	self.needed = "/null"
 
 	self.shopimage = Image.Create( AssetLocation.Resource, "BlackMarketICO" )
 	self.tpimage = Image.Create( AssetLocation.Resource, "TeleportICO" )
@@ -55,9 +54,10 @@ function ServerMenu:LoadCategories()
 
 	self.help_button = Button.Create( self.window )
 	self.help_button:SetVisible( true )
-	self.help_button:SetText( "Открыть помощь по серверу (FAQ)" )
+	self.help_button:SetText( "Открыть помощь / правила сервера (FAQ)" )
 	self.help_button:SetDock( GwenPosition.Top )
 	self.help_button:SetTextSize( 14 )
+	self.help_button:SetSize( Vector2( 0, 30 ) )
 	self.help_button:Subscribe( "Press", self, self.CastHelpMenu )
 
 	self.scroll_control = ScrollControl.Create( self.window )
@@ -161,60 +161,74 @@ function ServerMenu:LoadCategories()
 	self.mainmenu_button:SetToolTip( "Покинуть сервер." )
 	self.mainmenu_button:Subscribe( "Press", self, self.CastMainMenu )
 
-	self.passive = Label.Create( self.window )
-	self.passive:SetSize( Vector2( 100, 15 ) )
+	self.leftlabel = Label.Create( self.window )
+	self.leftlabel:SetDock( GwenPosition.Left )
+	self.leftlabel:SetMargin( Vector2( 0, 15 ), Vector2( 5, 5 ) )
+	self.leftlabel:SetSize( Vector2( 250, 0 ) )
+
+	self.passive = Label.Create( self.leftlabel )
 	self.passive:SetTextColor( Color.MediumSpringGreen )
 	self.passive:SetText( "Мирный режим:" )
-	self.passive:SetPosition( Vector2( 5, 250 ) )
+	self.passive:SetPosition( Vector2( 5, 0 ) )
+	self.passive:SizeToContents()
 
-	self.passiveon_btn = Button.Create( self.window )
+	self.passiveon_btn = Button.Create( self.leftlabel )
 	self.passiveon_btn:SetVisible( true )
 	self.passiveon_btn:SetText( "Включить" )
 	self.passiveon_btn:SetSize( Vector2( 100, 30 ) )
 	self.passiveon_btn:SetTextSize( 14 )
-	self.passiveon_btn:SetPosition( Vector2( 5, 270 ) )
+	self.passiveon_btn:SetPosition( Vector2( 5, 20 ) )
 	self.passiveon_btn:Subscribe( "Press", self, self.CastPassive )
 
-	self.jesusmode = Label.Create( self.window )
-	self.jesusmode:SetSize( Vector2( 100, 15 ) )
+	self.jesusmode = Label.Create( self.leftlabel )
 	self.jesusmode:SetTextColor( Color.LightBlue )
 	self.jesusmode:SetText( "Иисус мод:" )
-	self.jesusmode:SetPosition( Vector2( self.passive:GetSize().x + 20, 250 ) )
+	self.jesusmode:SetPosition( Vector2( self.passive:GetPosition().x + 116, 0 ) )
+	self.jesusmode:SizeToContents()
 
-	self.jesusmode_btn = Button.Create( self.window )
+	self.jesusmode_btn = Button.Create( self.leftlabel )
 	self.jesusmode_btn:SetText( "Включить" )
 	self.jesusmode_btn:SetSize( Vector2( 100, 30 ) )
 	self.jesusmode_btn:SetTextSize( 14 )
-	self.jesusmode_btn:SetPosition( Vector2( self.passiveon_btn:GetSize().x + 20, 270 ) )
+	self.jesusmode_btn:SetPosition( Vector2( self.passiveon_btn:GetSize().x + 20, 20 ) )
 	self.jesusmode_btn:Subscribe( "Press", self, self.CastJesusMode )
 
-	self.bonus = Label.Create( self.window )
-	self.bonus:SetText( "Награды:" )
-	self.bonus:SetPosition( Vector2( self.window:GetSize().x - 235, 250 ) )
+	self.rightlabel = Label.Create( self.window )
+	self.rightlabel:SetDock( GwenPosition.Right )
+	self.rightlabel:SetMargin( Vector2( 0, 15 ), Vector2( 5, 5 ) )
+	self.rightlabel:SetSize( Vector2( 230, 0 ) )
 
-	self.bonus_btn = Button.Create( self.window )
+	self.bonus = Label.Create( self.rightlabel )
+	self.bonus:SetText( "Награды:" )
+	self.bonus:SetDock( GwenPosition.Top )
+	self.bonus:SetMargin( Vector2( 0, 0 ), Vector2( 0, 6 ) )
+	self.bonus:SizeToContents()
+
+	self.bonus_btn = Button.Create( self.rightlabel )
 	self.bonus_btn:SetEnabled( false )
 	self.bonus_btn:SetText( "Достигните 9-го уровня" )
 	self.bonus_btn:SetSize( Vector2( 215, 30 ) )
 	self.bonus_btn:SetTextHoveredColor( Color.Yellow )
 	self.bonus_btn:SetTextPressedColor( Color.Yellow )
 	self.bonus_btn:SetTextSize( 15 )
-	self.bonus_btn:SetPosition( Vector2( self.window:GetSize().x - 235, 270 ) )
+	self.bonus_btn:SetDock( GwenPosition.Top )
 	self.bonus_btn:Subscribe( "Press", self, self.Cash )
 
-	self.money = Label.Create( self.window )
-	self.money:SetTextColor( Color.White )
-	self.money:SetText( "Баланс: $" .. LocalPlayer:GetMoney() )
-	self.money:SetTextSize( 20 )
-	self.money:SetPosition( Vector2( 5, self.window:GetSize().y - 100 ) )
-	self.money:SizeToContents()
-
-	self.time = Label.Create( self.window )
+	self.time = Label.Create( self.leftlabel )
 	self.time:SetTextColor( Color.White )
 	self.time:SetText( "Игровое время: 00:00" )
 	self.time:SetTextSize( 15 )
-	self.time:SetPosition( Vector2( 5, self.money:GetSize().y + 10 ) )
 	self.time:SizeToContents()
+	self.time:SetMargin( Vector2( 10, 5 ), Vector2( 0, 15 ) )
+	self.time:SetDock( GwenPosition.Bottom )
+
+	self.money = Label.Create( self.leftlabel )
+	self.money:SetTextColor( Color( 251, 184, 41 ) )
+	self.money:SetText( "Баланс: $" .. LocalPlayer:GetMoney() )
+	self.money:SetTextSize( 20 )
+	self.money:SizeToContents()
+	self.money:SetMargin( Vector2( 10, 5 ), Vector2( 0, 0 ) )
+	self.money:SetDock( GwenPosition.Bottom )
 end
 
 function ServerMenu:LocalPlayerMoneyChange()
@@ -352,17 +366,9 @@ function ServerMenu:SetWindowVisible( visible )
 		self.scroll_control:SetSize( Vector2( self.window:GetSize().x - 15, 215 ) )
 		self.bonus:SetPosition( Vector2( self.window:GetSize().x - 235, 250 ) )
 		self.bonus_btn:SetPosition( Vector2( self.window:GetSize().x - 235, 270 ) )
-		self.money:SetPosition( Vector2( 5, self.window:GetSize().y - 100 ) )
-		self.time:SetPosition( Vector2( 5, self.money:GetPosition().y + 20 ) )
 
 		self.money:SizeToContents()
 		self.time:SizeToContents()
-
-		if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-			self.money:SetText( "Баланс: $" .. LocalPlayer:GetMoney() )
-		else
-			self.money:SetText( "Money: " .. LocalPlayer:GetMoney() )
-		end
 
 		if LocalPlayer:GetValue( "SystemFonts" ) then
 			self.shop_button:SetFont( AssetLocation.SystemFont, "Impact" )
@@ -374,37 +380,47 @@ function ServerMenu:SetWindowVisible( visible )
 			self.money:SetFont( AssetLocation.SystemFont, "Impact" )
 			self.time:SetFont( AssetLocation.SystemFont, "Impact" )
 		end
-		if LocalPlayer:GetValue( "Passive" ) then
+
+		if LocalPlayer:GetValue( "Lang" ) then
 			if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-				self.passiveon_btn:SetText( "Выключить" )
+				self.money:SetText( "Баланс: $" .. LocalPlayer:GetMoney() )
 			else
-				self.passiveon_btn:SetText( "Disable" )
+				self.money:SetText( "Money: " .. LocalPlayer:GetMoney() )
 			end
-		else
-			if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-				self.passiveon_btn:SetText( "Включить" )
+
+			if LocalPlayer:GetValue( "Passive" ) then
+				if LocalPlayer:GetValue( "Lang" ) == "РУС" then
+					self.passiveon_btn:SetText( "Выключить" )
+				else
+					self.passiveon_btn:SetText( "Disable" )
+				end
 			else
-				self.passiveon_btn:SetText( "Enable" )
+				if LocalPlayer:GetValue( "Lang" ) == "РУС" then
+					self.passiveon_btn:SetText( "Включить" )
+				else
+					self.passiveon_btn:SetText( "Enable" )
+				end
+			end
+			if LocalPlayer:GetValue( "WaterWalk" ) then
+				if LocalPlayer:GetValue( "Lang" ) == "РУС" then
+					self.jesusmode_btn:SetText( "Выключить" )
+				else
+					self.jesusmode_btn:SetText( "Disable" )
+				end
+			else
+				if LocalPlayer:GetValue( "Lang" ) == "РУС" then
+					self.jesusmode_btn:SetText( "Включить" )
+				else
+					self.jesusmode_btn:SetText( "Enable" )
+				end
+			end
+			if LocalPlayer:GetValue( "Lang" ) == "РУС" then
+				self.bonus_btn:SetText( "$$ Денежный бонус $$" )
+			else
+				self.bonus_btn:SetText( "$$ Money bonus $$" )
 			end
 		end
-		if LocalPlayer:GetValue( "WaterWalk" ) then
-			if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-				self.jesusmode_btn:SetText( "Выключить" )
-			else
-				self.jesusmode_btn:SetText( "Disable" )
-			end
-		else
-			if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-				self.jesusmode_btn:SetText( "Включить" )
-			else
-				self.jesusmode_btn:SetText( "Enable" )
-			end
-		end
-		if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-			self.bonus_btn:SetText( "$$ Денежный бонус $$" )
-		else
-			self.bonus_btn:SetText( "$$ Money bonus $$" )
-		end
+
 		if LocalPlayer:GetValue( "JesusModeEnabled" ) then
 			self.jesusmode:SetVisible( true )
 			self.jesusmode_btn:SetVisible( true )
