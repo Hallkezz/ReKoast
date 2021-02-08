@@ -7,9 +7,13 @@ function VehicleRadio:__init()
 	self.offname = "Выключено"
 
 	self.check = 0
+
+	if LocalPlayer:InVehicle() then
+		self.PreTickEvent = Events:Subscribe( "PreTick", self, self.PreTick )
+		self.KeyUpEvent = Events:Subscribe( "KeyUp", self, self.KeyUp )
+	end
+
 	Events:Subscribe( "Lang", self, self.Lang )
-	Events:Subscribe( "KeyUp", self, self.KeyUp )
-	Events:Subscribe( "PreTick", self, self.PreTick )
 	Events:Subscribe( "LocalPlayerEnterVehicle", self, self.LocalPlayerEnterVehicle )
 	Events:Subscribe( "LocalPlayerExitVehicle", self, self.LocalPlayerExitVehicle )
 	Events:Subscribe( "ModuleUnload", self, self.ModuleUnload )
@@ -43,6 +47,8 @@ function VehicleRadio:KeyUp( args )
 				})
 
 				Sound:SetParameter(0,1)
+
+				Sound:SetParameter( 0, Game:GetSetting(GameSetting.MusicVolume) / 100 )
 				Game:ShowPopup( self.radioname .. "Tom Main Theme", false )
 			end
 
@@ -59,6 +65,8 @@ function VehicleRadio:KeyUp( args )
 				})
 
 				Sound:SetParameter(0,1)
+
+				Sound:SetParameter( 0, Game:GetSetting(GameSetting.MusicVolume) / 100 )
 				Game:ShowPopup( self.radioname .. "Fighting 01", false )
 			end
 
@@ -75,6 +83,8 @@ function VehicleRadio:KeyUp( args )
 				})
 
 				Sound:SetParameter(0,1)
+
+				Sound:SetParameter( 0, Game:GetSetting(GameSetting.MusicVolume) / 100 )
 				Game:ShowPopup( self.radioname .. "Fighting 02", false )
 			end
 
@@ -85,6 +95,7 @@ function VehicleRadio:KeyUp( args )
 				self.refresh = nil
 				self.radio = nil
 				self.check = 0
+
 				Game:ShowPopup( self.radioname .. self.offname, false )
 			end
 		end
@@ -95,6 +106,7 @@ function VehicleRadio:PreTick( args )
 	if self.radio then
 		if LocalPlayer:InVehicle() then
 			Sound:SetPosition( Camera:GetPosition() )
+			Sound:SetParameter( 0, Game:GetSetting(GameSetting.MusicVolume) / 100 )
 		end
 	end
 end
@@ -102,12 +114,30 @@ end
 function VehicleRadio:LocalPlayerEnterVehicle( args )
 	Game:ShowPopup( self.radioname .. self.offname, false )
 	self.check = 0
+
+	if not self.PreTickEvent then
+		self.PreTickEvent = Events:Subscribe( "PreTick", self, self.PreTick )
+	end
+
+	if not self.KeyUpEvent then
+		self.KeyUpEvent = Events:Subscribe( "KeyUp", self, self.KeyUp )
+	end
 end
 
 function VehicleRadio:LocalPlayerExitVehicle( args )
 	if self.radio then
 		self:ModuleUnload()
 		self.radio = nil
+	end
+
+	if self.PreTickEvent then
+		Events:Unsubscribe( self.PreTickEvent )
+		self.PreTickEvent = nil
+	end
+
+	if self.KeyUpEvent then
+		Events:Unsubscribe( self.KeyUpEvent )
+		self.KeyUpEvent = nil
 	end
 end
 
