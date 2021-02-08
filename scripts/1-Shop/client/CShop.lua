@@ -1,8 +1,13 @@
 function Shop:__init()
+	self.cooldown = 10
+	self.cooltime = 0
+
 	self.active = false
 	self.home = true
 	self.nameBM = "Вы заказали: "
 	self.noVipText = "У вас отсувствует VIP-статус :("
+	self.w = "Пожалуйста, подождите "
+	self.ws = " секунд."
 	self.unit = 0
 
 	BuyMenuLineColor = Color.White
@@ -23,12 +28,12 @@ function Shop:__init()
 	self.money_text = Label.Create( self.window )
 	self.money_text:SetDock( GwenPosition.Fill )
 	self.money_text:SetMargin( Vector2( 8, 0 ), Vector2( 8, 0 ) )
-    self.money_text:SetAlignment( GwenPosition.Right )
+    	self.money_text:SetAlignment( GwenPosition.Right )
 	self.money_text:SetTextSize( 18 )
 	self.money_text:SetFont( AssetLocation.SystemFont, "Impact" )
-    self.money_text:SetTextColor( BuyMenuMoneyColor )
+   	self.money_text:SetTextColor( BuyMenuMoneyColor )
 
-    self:UpdateMoneyString()
+    	self:UpdateMoneyString()
 
 	self.buy_button = Button.Create( self.window )
 	self.buy_button:SetWidthAutoRel( 0.5 )
@@ -99,6 +104,8 @@ function Shop:Lang( args )
 	self.buy_button:SetText( "Get" )
 	self.nameBM = "You ordered: "
 	self.noVipText = "Needed VIP status not found."
+	self.w = "Please, wait "
+	self.ws = " seconds."
 end
 
 function Shop:RenderAppearanceHat()
@@ -1047,9 +1054,19 @@ function Shop:Buy( args )
 
 	if first_selected_item ~= nil then
 		local index = first_selected_item:GetDataNumber( "id" )
+		local time = Client:GetElapsedSeconds()
 		self:GetUnitString()
-		Network:Send( "PlayerFired", { self.types[category_name], subcategory_name, index, self.tone1, self.tone2 } )
 		self:Close()
+		if self.types[category_name] == 1 then
+			if time < self.cooltime then
+				Events:Fire( "CastCenterText", { text = self.w .. math.ceil( self.cooltime - time ) .. self.ws, time = 6, color = Color.Red } )
+				return false
+			end
+			self.cooltime = time + self.cooldown
+		end
+	
+		Network:Send( "PlayerFired", { self.types[category_name], subcategory_name, index, self.tone1, self.tone2 } )
+		return false
 	end
 end
 
