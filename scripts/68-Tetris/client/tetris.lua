@@ -264,11 +264,11 @@ function Tetris:__init()
 	self.tSetGOver = "Финальный счёт: "
 	self.tSetGOver2 = " \n\n\n\nНажмите 'Пробел', чтобы повторить попытку."
 
-	Network:Subscribe( "TetrisToggle", self, self.Toggle )
 	Network:Subscribe( "NewLeaderboard", self, self.NewLeaderboard )
 
 	Events:Subscribe( "Lang", self, self.Lang )
 	Events:Subscribe( "GetOption", self, self.GetOption )
+	Events:Subscribe( "TetrisToggle", self, self.Toggle )
 	Events:Subscribe( "Render", self, self.Render )
 
 	Network:Subscribe( "003", self, self.onTetrisAttempt )
