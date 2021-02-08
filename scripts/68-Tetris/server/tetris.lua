@@ -10,7 +10,6 @@ function ServerTetris:__init()
 
 	self:initVars()
 
-	Events:Subscribe( "PlayerChat", self, self.OnPlayerChat )
 	Events:Subscribe( "PostTick", self, self.onPostTick )
 	Events:Subscribe( "ModuleLoad", self, self.onModuleLoad )
 
@@ -133,13 +132,6 @@ function ServerTetris:Reward( name, last )
 				end
 			end
 		end
-	end
-end
-
-function ServerTetris:OnPlayerChat( args )
-	if args.text == "/tetris" then
-		Network:Send(args.player, "TetrisToggle")
-		return false
 	end
 end
 
