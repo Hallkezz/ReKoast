@@ -367,20 +367,28 @@ end
 
 function Freeroam:PlayerDeath( args )
     if args.player:GetWorld() ~= DefaultWorld then return end
-	if args.killer and args.killer:GetSteamId() ~= args.player:GetSteamId() then
-        self.kills[ args.killer:GetId() ] = args.killer:GetValue( "Kills" ) + 1
-        args.killer:SetNetworkValue( "Kills", self.kills[ args.killer:GetId() ] )
-        if args.player:GetValue( "Kills" ) == 0 then
-            args.killer:SetMoney( args.killer:GetMoney() + 0 )
-            if continuousFireTable[args.killer:GetEquippedWeapon().id] == true then
-                Network:Send( args.killer, "KillerStats", { text = "Без награды :c, используйте обычное оружие!" } )
-            end
-        elseif args.player:GetValue( "Kills" ) >= 0 then
-            if not continuousFireTable[args.killer:GetEquippedWeapon().id] == true then
-                args.killer:SetMoney( args.killer:GetMoney() + args.player:GetValue( "Kills" ) * 10 )
-                args.player:SetNetworkValue( "Kills", 0 )
-            else
-                Network:Send( args.killer, "KillerStats", { text = "Без награды :c, используйте обычное оружие!" } )
+    if args.killer and args.killer:GetSteamId() ~= args.player:GetSteamId() then
+        if args.killer:GetValue( "Passive" ) then
+		    args.killer:SetHealth( 0 )
+		else
+            if args.killer:GetValue( "Kills" ) then
+                if args.killer:GetValue( "Kills" ) < 1000 then
+                    self.kills[ args.killer:GetId() ] = args.killer:GetValue( "Kills" ) + 1
+                    args.killer:SetNetworkValue( "Kills", self.kills[ args.killer:GetId() ] )
+                end
+                if args.player:GetValue( "Kills" ) == 0 then
+                    args.killer:SetMoney( args.killer:GetMoney() + 0 )
+                    if continuousFireTable[args.killer:GetEquippedWeapon().id] == true then
+                        Network:Send( args.killer, "KillerStats", { text = "Без награды :c, используйте обычное оружие!" } )
+                    end
+                elseif args.player:GetValue( "Kills" ) >= 0 then
+                    if not continuousFireTable[args.killer:GetEquippedWeapon().id] == true then
+                        args.killer:SetMoney( args.killer:GetMoney() + args.player:GetValue( "Kills" ) * 10 )
+                        args.player:SetNetworkValue( "Kills", 0 )
+                    else
+                        Network:Send( args.killer, "KillerStats", { text = "Без награды :c, используйте обычное оружие!" } )
+                    end
+                end
             end
         end
         Network:Send( args.player, "PlayerKilled" )
