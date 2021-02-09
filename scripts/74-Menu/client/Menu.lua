@@ -5,6 +5,9 @@ function Menu:__init()
 	self.minimapfix = true
 	self.freeroam = false
 	self.hider = true
+	self.CLtime = os.date( "%X" )
+	self.CLdate = os.date( "%d/%m/%Y" )
+
 	LocalPlayer:SetValue( "Menu", true )
 	self:LoadImages()
 
@@ -86,6 +89,7 @@ function Menu:__init()
 	self.eng_button:SetTextSize( Render.Size.x / 70 )
 	self.eng_button:Subscribe( "Press", self, self.Eng )
 
+	Events:Subscribe( "GetOption", self, self.GetOption )
 	Events:Subscribe( "ModuleLoad", self, self.ModuleLoad )
 	if not self.LocalPlayerInputEvent then
 		self.LocalPlayerInputEvent = Events:Subscribe( "LocalPlayerInput", self, self.LocalPlayerInput )
@@ -93,6 +97,10 @@ function Menu:__init()
 
 	Network:Subscribe( "BackMe", self, self.BackMe )
 	Network:Subscribe( "OpenMenu", self, self.Display )
+end
+
+function Menu:GetOption( args )
+	self.PendosClockFormat = args.pendclockformat
 end
 
 function Menu:ModuleLoad()
@@ -179,8 +187,12 @@ function Menu:Open()
 end
 
 function Menu:Render()
-	local message1 = os.date ( "%X" )
-	local time1 = os.date("%d/%m/%Y")
+	if self.PendosClockFormat then
+		self.CLtime = os.date("%I:%M:%S %p")
+	else
+		self.CLtime = os.date( "%X" )
+	end
+	self.CLdate = os.date("%d/%m/%Y")
 
 	LocalPlayer:SetValue( "GetFreeroam", self.freeroam )
 
@@ -217,9 +229,9 @@ function Menu:Render()
 			Render:DrawText( pos8, LocalPlayer:GetValue( "KoastBuild" ), Color.White, 15 )
 		end
 		local position = Vector2( 20, Render.Height * 0.40 )
-		local text = tostring(message1)
+		local text = tostring( self.CLtime )
 		local pos_1 = Vector2( (20)/1, (Render.Height/3) + 5)
-		local text1 = tostring(time1)
+		local text1 = tostring( self.CLdate )
 
 		Render:SetFont( AssetLocation.Disk, "Archivo.ttf" )
 		Render:DrawText( position, text, self.DT_colour, 24 )
