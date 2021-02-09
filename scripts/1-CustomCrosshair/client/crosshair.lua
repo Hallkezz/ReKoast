@@ -49,12 +49,20 @@ function Crosshair:__init()
 
 	Events:Subscribe( "GetOption", self, self.GetOption )
 	Events:Subscribe( "ResolutionChange", self, self.ResolutionChange )
-	Events:Subscribe( "Render", self, self.Render )
 	Events:Subscribe( "EntityBulletHit", self, self.EntityBulletHit )
 end
 
 function Crosshair:GetOption( args )
-	self.active = args.actCH
+	if args.actCH then
+		if not self.RenderEvent then
+			self.RenderEvent = Events:Subscribe( "Render", self, self.Render )
+		end
+	else
+		if self.RenderEvent then
+			Events:Unsubscribe( self.RenderEvent )
+			self.RenderEvent = nil
+		end
+	end
 end
 
 function Crosshair:EntityBulletHit( args )
@@ -71,7 +79,6 @@ function Crosshair:ResolutionChange( args )
 end
 
 function Crosshair:Render()
-	if not self.active then return end
 	if self.popalTimer then
     	if self.popalTimer:GetSeconds() >= 0.1 then
     		self.crosscolor = Color.White
