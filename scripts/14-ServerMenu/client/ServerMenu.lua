@@ -345,6 +345,13 @@ end
 function ServerMenu:Render()
 	local is_visible = self.active and (Game:GetState() == GUIState.Game)
 
+	local timeTable = tostring ( math.round ( Game:GetTime(), 1 ) ):split ( "." )
+	if LocalPlayer:GetValue( "Lang" ) == "РУС" then
+		self.opyt:SetText( "Игровое время: " .. string.format ( "%02d:%02d", ( timeTable [ 1 ] or 0 ), ( timeTable [ 2 ] or 0 ) ) )
+	else
+		self.opyt:SetText( "Game Time: " .. string.format ( "%02d:%02d", ( timeTable [ 1 ] or 0 ), ( timeTable [ 2 ] or 0 ) ) )
+	end
+
 	if self.window:GetVisible() ~= is_visible then
 		self.window:SetVisible( is_visible )
 	end
@@ -353,10 +360,8 @@ end
 function ServerMenu:UpdateTime( args )
 	if LocalPlayer:GetValue( "Lang" ) == "РУС" then
 		self.money:SetText( "Баланс: $" .. LocalPlayer:GetMoney() )
-		self.time:SetText( "Игровое время: " .. args.time )
 	else
 		self.money:SetText( "Money: " .. LocalPlayer:GetMoney() )
-		self.time:SetText( "Game time: " .. args.time )
 	end
 
 	self.money:SizeToContents()
@@ -627,6 +632,13 @@ function ServerMenu:Bonus()
 			Chat:Print( "[Бонус] ", Color.White, "Доступен денежный бонус! Откройте меню сервера, чтобы получить его.", Color.GreenYellow )
 		end
 	end
+end
+
+function math.round(number, decimals, method)
+    decimals = decimals or 0
+    local factor = 10 ^ decimals
+    if (method == "ceil" or method == "floor") then return math[method](number * factor) / factor
+    else return tonumber(("%."..decimals.."f"):format(number)) end
 end
 
 servermenu = ServerMenu()
