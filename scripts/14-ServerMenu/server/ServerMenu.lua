@@ -7,7 +7,6 @@ function ServerMenu:__init()
 
 	Network:Subscribe( "PlayerKick", self, self.PlayerKick )
 	Network:Subscribe( "Cash", self, self.Cash )
-	Network:Subscribe( "GetTime", self, self.GetTime )
 
 	Events:Subscribe( "PostTick", self, self.PostTick )
 	Events:Subscribe( "PlayerChat", self, self.PlayerChat )
@@ -54,17 +53,6 @@ function ServerMenu:PlayerChat( args )
 	end
 
 	return false
-end
-
-function ServerMenu:GetTime( args, sender )
-	local secondsLeft = sender:GetWorld():GetTime()
-
-	local minutes = secondsLeft % 60
-	local seconds = math.floor( secondsLeft / 60 )
-
-	local timeDisplay = string.format( "%02d:%02d", minutes, seconds )
-	local text = tostring( timeDisplay )
-	Network:Send( sender, "UpdateTime", { time = text } )
 end
 
 servermenu = ServerMenu()
