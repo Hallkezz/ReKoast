@@ -3,7 +3,6 @@ class "RainbowCars"
 function RainbowCars:__init()
     self.RainbowPlayers = {}
 
-    self.timer = Timer()
     self.rT = Timer()
 
     Events:Subscribe( "PreTick", self, self.PreTick )
@@ -57,7 +56,6 @@ end
 
 function RainbowCars:PreTick( args )
     self:Colorim()
-    self.timer:Restart()
 end
 
 rainbowcars = RainbowCars()
