@@ -33,12 +33,14 @@ end
 
 function Version:GetServerName()
     local file = io.open("servername.txt", "r")
-    s = file:read("*a")
+    if file then
+        s = file:read("*a")
 
-    if s then
-        self.sname = s
+        if s then
+            self.sname = s
+        end
+        file:close()
     end
-    file:close()
 end
 
 version = Version()
