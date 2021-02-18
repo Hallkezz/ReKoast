@@ -5,8 +5,11 @@ function Player:SteamId()
 end
 
 function Bank:__init()
+    self.tag = "[Сервер] "
+
     Events:Subscribe( "PlayerJoin", self, self.PlayerJoin )
     Events:Subscribe( "PlayerQuit", self, self.PlayerQuit )
+    Events:Subscribe( "PlayerChat", self, self.PlayerChat )
     Events:Subscribe( "PlayerMoneyChange", self, self.PlayerMoneyChange )
     Events:Subscribe( "PostTick", self, self.PostTick )
     Events:Subscribe( "ModuleUnload", self, self.CommitChanges )
@@ -67,6 +70,72 @@ function Bank:PlayerMoneyChange( args )
     if self:IsUpdated( args.player ) then
         self:AddToQueue( args.player, args.new_money )
     end
+end
+
+function Bank:PlayerChat( args )
+	local msg = args.text
+	local player = args.player
+
+	if ( msg:sub(1, 1) ~= "/" ) then
+		return true
+	end    
+
+	local cmdargs = {}
+	for word in string.gmatch(msg, "[^%s]+") do
+		table.insert(cmdargs, word)
+	end
+
+    if (cmdargs[1] == "/sendmoney") or (cmdargs[1] == "/pay") then
+        if #cmdargs < 3 then
+            args.player:SendChatMessage( self.tag, Color.White, "Пример: /pay <игрок> <кол-во денег>", Color.DarkGray )
+            return false
+        end
+
+        local player = Player.Match( cmdargs[2] )[1]
+
+        if not IsValid( player ) then
+            args.player:SendChatMessage( self.tag, Color.White, "Игрок " .. cmdargs[2] .. " не существует!", Color.DarkGray )
+            return false
+        end
+
+        if player == args.player then
+            args.player:SendChatMessage( self.tag, Color.White, "Вы не можете отправить деньги самому себе!", Color.DarkGray )
+            return false
+        end
+
+        local amount = tonumber( cmdargs[3] )
+        if amount == nil then
+            args.player:SendChatMessage( self.tag, Color.White, "Это недействительная сумма денег для отправки!", Color.DarkGray )
+            return false
+        end
+
+        if amount < 0 then
+            args.player:SendChatMessage( self.tag, Color.White, "Это недействительная сумма денег для отправки!", Color.DarkGray )
+            return false
+        end
+
+        if amount > 10000 then
+            args.player:SendChatMessage( self.tag, Color.White, "Вы не моежете отправить более $10.000!", Color.DarkGray )
+            return false
+        end
+
+        local player_new_money = args.player:GetMoney() - amount
+        if player_new_money < 0 then
+            args.player:SendChatMessage( self.tag, Color.White, "У вас недостаточно для отправки $" .. tostring(amount) .. "!", Color.DarkGray )
+            return false
+        end
+
+        args.player:SetMoney( player_new_money )
+
+        player_new_money = player:GetMoney() + amount
+        player:SetMoney( player_new_money )
+
+        args.player:SendChatMessage( self.tag, Color.White, "Успешно отправлено $" .. tostring(amount) .. " для " .. player:GetName() .. ".", Color( 0, 255, 0 ) )
+
+        player:SendChatMessage( self.tag, Color.White, "Получено $" .. tostring(amount) .. " от " .. args.player:GetName() .. ".", Color( 0, 255, 0 ) )
+        return false
+    end
+	return false
 end
 
 function Bank:PostTick( args )
