@@ -18,6 +18,7 @@ function HControls:EngHelp()
 				"     Hallkezz\n \n" ..
 				"> Also thanks for scripts:\n" ..
 				"     Proxwian\n" ..
+				"     Neon\n" ..
 				"     JasonMRC\n" ..
 				"     Lord_Farquaad\n" ..
 				"     Dev_34\n" ..
@@ -39,6 +40,7 @@ function HControls:ModulesLoad()
 				"     Hallkezz\n \n" ..
 				"> Заимствованный код:\n" ..
 				"     Proxwian\n" ..
+				"     Neon\n" ..
 				"     JasonMRC\n" ..
 				"     Lord_Farquaad\n" ..
 				"     Dev_34\n" ..
