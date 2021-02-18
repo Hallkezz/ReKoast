@@ -115,7 +115,7 @@ function Bank:PlayerChat( args )
         end
 
         if amount > 10000 then
-            args.player:SendChatMessage( self.tag, Color.White, "Вы не моежете отправить более $10.000!", Color.DarkGray )
+            args.player:SendChatMessage( self.tag, Color.White, "Вы не можете отправить более $10.000!", Color.DarkGray )
             return false
         end
 
