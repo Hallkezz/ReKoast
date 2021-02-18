@@ -17,6 +17,7 @@ end
 
 function Doors:KeyUp( args )
 	if args.key == string.byte("L") then
+		if Game:GetState() ~= GUIState.Game then return end
 		if LocalPlayer:GetWorld() ~= DefaultWorld then return end
 		local time = Client:GetElapsedSeconds()
 		if time < self.cooltime then
