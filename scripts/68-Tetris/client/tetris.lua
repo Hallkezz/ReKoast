@@ -609,6 +609,17 @@ function Tetris:KeyDown( args )
 			angle = Angle()
 		})
 	end
+
+	if self.inTetrisMode and (args.key == VirtualKey.Escape) then
+		self.firstGo = true
+		self:PopulateGrid()
+		self.inTetrisMode = not self.inTetrisMode
+
+		Events:Unsubscribe( self.LocalPlayerInputEvent )
+		Events:Unsubscribe( self.KeyDownEvent )
+		self.LocalPlayerInputEvent = nil
+		self.KeyDownEvent = nil
+	end
 end
 
 function Tetris:Close()
