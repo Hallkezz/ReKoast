@@ -13,12 +13,11 @@ function ServerMenu:__init()
 	self:LoadCategories()
 
 	Events:Subscribe( "Lang", self, self.Lang )
-    Events:Subscribe( "KeyUp", self, self.KeyUp )
+        Events:Subscribe( "KeyUp", self, self.KeyUp )
 	Events:Subscribe( "KeyDown", self, self.KeyDown )
 
 	Network:Subscribe( "Settings", self, self.Open )
 	Network:Subscribe( "Bonus", self, self.Bonus )
-	Network:Subscribe( "UpdateTime", self, self.UpdateTime )
 end
 
 function ServerMenu:Lang()
@@ -239,10 +238,6 @@ function ServerMenu:LoadCategories()
 	self.money:SetDock( GwenPosition.Bottom )
 end
 
-function ServerMenu:LocalPlayerMoneyChange()
-	Network:Send( "GetTime" )
-end
-
 function ServerMenu:Open()
 	self:SetWindowVisible( not self.active )
 	if self.active then
@@ -342,30 +337,35 @@ function ServerMenu:KeyDown( args )
 	end
 end
 
+function ServerMenu:UpdateMoneyString( money )
+    if money == nil then
+        money = LocalPlayer:GetMoney()
+    end
+
+	if LocalPlayer:GetValue( "Lang" ) == "РУС" then
+		self.money:SetText( string.format( "Баланс: $%i", money ) )
+	else
+		self.money:SetText( string.format( "Баланс: $%i", money ) )
+	end
+end
+
+function ServerMenu:LocalPlayerMoneyChange( args )
+    self:UpdateMoneyString( args.new_money )
+end
+
 function ServerMenu:Render()
 	local is_visible = self.active and (Game:GetState() == GUIState.Game)
 
 	local timeTable = tostring ( math.round ( Game:GetTime(), 1 ) ):split ( "." )
 	if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-		self.opyt:SetText( "Игровое время: " .. string.format ( "%02d:%02d", ( timeTable [ 1 ] or 0 ), ( timeTable [ 2 ] or 0 ) ) )
+		self.time:SetText( "Игровое время: " .. string.format ( "%02d:%02d", ( timeTable [ 1 ] or 0 ), ( timeTable [ 2 ] or 0 ) ) )
 	else
-		self.opyt:SetText( "Game Time: " .. string.format ( "%02d:%02d", ( timeTable [ 1 ] or 0 ), ( timeTable [ 2 ] or 0 ) ) )
+		self.time:SetText( "Game Time: " .. string.format ( "%02d:%02d", ( timeTable [ 1 ] or 0 ), ( timeTable [ 2 ] or 0 ) ) )
 	end
 
 	if self.window:GetVisible() ~= is_visible then
 		self.window:SetVisible( is_visible )
 	end
-end
-
-function ServerMenu:UpdateTime( args )
-	if LocalPlayer:GetValue( "Lang" ) == "РУС" then
-		self.money:SetText( "Баланс: $" .. LocalPlayer:GetMoney() )
-	else
-		self.money:SetText( "Money: " .. LocalPlayer:GetMoney() )
-	end
-
-	self.money:SizeToContents()
-	self.time:SizeToContents()
 end
 
 function ServerMenu:SetWindowVisible( visible )
@@ -634,7 +634,7 @@ function ServerMenu:Bonus()
 	end
 end
 
-function math.round(number, decimals, method)
+function math.round( number, decimals, method )
     decimals = decimals or 0
     local factor = 10 ^ decimals
     if (method == "ceil" or method == "floor") then return math[method](number * factor) / factor
