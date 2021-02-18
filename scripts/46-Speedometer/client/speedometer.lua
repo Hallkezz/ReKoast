@@ -28,9 +28,6 @@ function Speedometer:__init()
 	Events:Subscribe( "Render", self, self.GameRender )
 	Events:Subscribe( "LocalPlayerInput", self, self.LocalPlayerInput )
 	Events:Subscribe( "KeyUp", self, self.KeyHide )
-	Events:Subscribe( "KeyUp", self, self.KeyUp )
-	Events:Subscribe( "KeyDown", self, self.KeyDown )
-
 	Events:Subscribe( "OpenSpeedometerMenu", self, self.Active )
 end
 
@@ -257,6 +254,14 @@ function Speedometer:Render()
 	bar_len = bar_len * vehicle:GetHealth()
 	Render:FillArea( bar_pos + Vector2.One, final_pos, Color.Black )
 	Render:FillArea( bar_pos, Vector2(bar_len, 4), col)
+
+	if LocalPlayer:GetValue( "VehBrake" ) then
+		self.fHealth = Color( 100, 100, 100 )
+		self.zHealth = Color( 100, 100, 100 )
+	else
+		self.zHealth = Color( 255, 150, 150 )
+		self.fHealth = Color( 255, 140, 50 )
+	end
 end
 
 function Speedometer:GameRender()
@@ -342,6 +347,14 @@ function Speedometer:GameRender()
 	Render:FillArea( bar_pos + Vector3( 1, 1, 4 ), Vector3( bar_len, 16, 0 ), col )
 	Render:FillArea( bar_pos + Vector3( 1, 1, 3 ), Vector3( text_size.x, 20, 0 ), Color( 0, 0, 0, 100 ) )
 	Render:FillArea( bar_pos, Vector3( bar_len, 16, 0 ), col )
+
+	if LocalPlayer:GetValue( "VehBrake" ) then
+		self.fHealth = Color( 100, 100, 100 )
+		self.zHealth = Color( 100, 100, 100 )
+	else
+		self.zHealth = Color( 255, 150, 150 )
+		self.fHealth = Color( 255, 140, 50 )
+	end
 end
 
 function Speedometer:Active()
@@ -357,26 +370,6 @@ end
 
 function Speedometer:WindowClosed( args )
 	self:SetWindowOpen( false )
-end
-
-function Speedometer:KeyUp( args )
-	if LocalPlayer:GetWorld() ~= DefaultWorld then return end
-	if string.char(args.key) == "F" then
-		if LocalPlayer:GetValue( "BoostEnabled" ) then
-			self.fHealth = Color( 255, 140, 50 )
-			self.zHealth = Color( 255, 150, 150 )
-		end
-	end
-end
-
-function Speedometer:KeyDown( args )
-	if LocalPlayer:GetWorld() ~= DefaultWorld then return end
-	if string.char(args.key) == "F" then
-		if LocalPlayer:GetValue( "BoostEnabled" ) then
-			self.fHealth = Color( 100, 100, 100 )
-			self.zHealth = Color( 100, 100, 100 )
-		end
-	end
 end
 
 function Speedometer:KeyHide( args )
