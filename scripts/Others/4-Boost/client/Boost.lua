@@ -129,7 +129,7 @@ function Boost:Render()
 	if Game:GetState() ~= GUIState.Game then return end
 	if LocalPlayer:GetWorld() ~= DefaultWorld then return end
 
-	if self.braked then
+	if LocalPlayer:GetValue( "VehBrake" ) then
 		if LocalPlayer:InVehicle() then
 		local veh = LocalPlayer:GetVehicle()
 		if veh:GetDriver() == LocalPlayer then
@@ -178,7 +178,7 @@ function Boost:Render()
 		if self.brake then
 			text = text .. self.nameFo
 		end
-		if self.BrakeText then
+		if LocalPlayer:GetValue( "VehBrake" ) then
 			text = self.nameFi
 		end
 
@@ -254,9 +254,8 @@ function Boost:KeyUp( args )
 	if LocalPlayer:GetWorld() ~= DefaultWorld then return end
 	if self.brake then
 		if string.char(args.key) == "F" then
+			LocalPlayer:SetValue( "VehBrake", nil )
 			self.boosting = true
-			self.BrakeText = nil
-			self.braked = nil
 			self.vpos = nil
 		end
 	end
@@ -271,9 +270,8 @@ function Boost:KeyBrake( args )
 			if veh:GetDriver() == LocalPlayer then
 				if string.char(args.key) == "F" then
 					local veh = LocalPlayer:GetVehicle()
+					LocalPlayer:SetValue( "VehBrake", true )
 					self.boosting = false
-					self.BrakeText = true
-					self.braked = true
 					veh:SetLinearVelocity( Vector3.Zero )
 					if not self.vpos then
 						self.vpos = veh:GetPosition()
@@ -285,9 +283,8 @@ function Boost:KeyBrake( args )
 end
 
 function Boost:LocalPlayerExitVehicle()
+	LocalPlayer:SetValue( "VehBrake", nil )
 	self.boosting = true
-	self.BrakeText = false
-	self.braked = false
 end
 
 function Boost:KeyHide( args )
