@@ -2,9 +2,10 @@ class 'CoinFlip'
 
 function CoinFlip:__init()
     Events:Subscribe( "PlayerChat", self, self.PlayerChat )
+    self.cmd = "/cflip"
     self.prefix = "[Монетка] "
     self.chance = 50
-    self.cmd = "/cflip"
+    self.limit = 1000
 end
 
 function CoinFlip:PlayerChat( args )
@@ -37,8 +38,8 @@ function CoinFlip:PlayerChat( args )
             return false
         end
 
-        if amount > 1000 then
-            args.player:SendChatMessage( self.prefix, Color.White, "Вы не можете поставить более $1.000!", Color.DarkGray )
+        if amount > self.limit then
+            args.player:SendChatMessage( self.prefix, Color.White, "Вы не можете поставить более $" .. self.limit .. "!", Color.DarkGray )
             return false
         end
 
