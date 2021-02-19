@@ -18,8 +18,6 @@ function Freeroam:__init()
 
     self.one_handed             = { Weapon.Handgun, Weapon.Revolver }
 
-    self.two_handed             = { Weapon.Assault, Weapon.Shotgun, Weapon.Sniper, Weapon.MachineGun }
-
     self.ammo_counts            = {
         [2] = { 12, 60 }, [4] = { 7, 35 }, [5] = { 30, 90 },
         [6] = { 3, 18 }, [11] = { 20, 100 }, [13] = { 6, 36 },
@@ -154,16 +152,8 @@ function Freeroam:GiveNewWeapons( p )
     p:ClearInventory()
 
     local one_id = table.randomvalue( self.one_handed )
-    local two_id = table.randomvalue( self.two_handed )
 
-    p:GiveWeapon( WeaponSlot.Right, 
-        Weapon( one_id, 
-            self.ammo_counts[one_id][1],
-            self.ammo_counts[one_id][2] * 16 ) )
-    p:GiveWeapon( WeaponSlot.Primary, 
-        Weapon( two_id, 
-            self.ammo_counts[two_id][1],
-            self.ammo_counts[two_id][2] * 16 ) )
+    p:GiveWeapon( WeaponSlot.Right, Weapon( one_id, self.ammo_counts[one_id][1], self.ammo_counts[one_id][2] * 16 ) )
 end
 
 function Freeroam:RandomizePosition( pos, magnitude, offset )
