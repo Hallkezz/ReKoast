@@ -159,13 +159,13 @@ function Lobby:Collision( args, sender )
 
 				args.vehicle:Remove()
 			else
-				if args.killer then
-					if args.killer == player then
-						self:Broadcast( player:GetName() .. " врезались в свой собственный след! Эпический провал.", Color( 228, 142, 56 ), player )
-						Tron.SendMessage( player, "Ты врезался в свой собственный след. Эпический провал.", Color( 228, 142, 56 ), player )
+				if args.killer and args.killer:GetDriver() then
+					if args.killer:GetDriver() == player then
+						self:Broadcast( player:GetName() .. " врезался в собственный след!", Color( 228, 142, 56 ), player )
+						Tron.SendMessage( player, "Вы врезались в свой собственный след!", Color( 228, 142, 56 ), player )
 					else
-						self:Broadcast( player:GetName() .. " врезался в след " .. args.killer:GetName() .. ", кек)", Color( 228, 142, 56 ), player )
-						Tron.SendMessage( player, "Вы врезались в след " .. args.killer:GetName() .. ", кек)", Color( 228, 142, 56 ), player )
+						self:Broadcast( player:GetName() .. " врезался в след " .. args.killer:GetDriver():GetName() .. ".", Color( 228, 142, 56 ), player )
+						Tron.SendMessage( player, "Вы врезались в след " .. args.killer:GetDriver():GetName() .. ".", Color( 228, 142, 56 ), player )
 					end
 				else
 					self:Broadcast( player:GetName() .. " взорвался.", Color( 228, 142, 56 ), player )
