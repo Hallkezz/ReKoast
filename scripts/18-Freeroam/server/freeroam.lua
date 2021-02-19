@@ -16,11 +16,9 @@ function Freeroam:__init()
     self.hotspots               = {}
     self.kills                  = {}
 
-    self.one_handed             = { Weapon.Handgun, Weapon.Revolver, Weapon.SMG, 
-                                    Weapon.SawnOffShotgun }
+    self.one_handed             = { Weapon.Handgun, Weapon.Revolver }
 
-    self.two_handed             = { Weapon.Assault, Weapon.Shotgun, 
-                                    Weapon.Sniper, Weapon.MachineGun }
+    self.two_handed             = { Weapon.Assault, Weapon.Shotgun, Weapon.Sniper, Weapon.MachineGun }
 
     self.ammo_counts            = {
         [2] = { 12, 60 }, [4] = { 7, 35 }, [5] = { 30, 90 },
@@ -283,9 +281,8 @@ end
 
 
 function Freeroam:PlayerJoin( args )
-	self:GiveNewWeapons( args.player )
-	local steamID = tostring(args.player:GetSteamId().id)
-	local qry = SQL:Query("SELECT * FROM players_poss WHERE steamid = ?")
+	local steamID = tostring( args.player:GetSteamId().id )
+	local qry = SQL:Query( "SELECT * FROM players_poss WHERE steamid = ?" )
 	qry:Bind(1, steamID)
     local result = qry:Execute()
 
