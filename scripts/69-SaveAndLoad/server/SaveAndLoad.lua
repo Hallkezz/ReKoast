@@ -6,6 +6,13 @@ function SaveAndLoad:__init()
 
 	self.one_handed = { Weapon.Handgun, Weapon.Revolver }
 
+	self.ammo_counts = {
+		[2] = { 12, 60 }, [4] = { 7, 35 }, [5] = { 30, 90 },
+		[6] = { 3, 18 }, [11] = { 20, 100 }, [13] = { 6, 36 },
+		[14] = { 4, 32 }, [16] = { 3, 12 }, [17] = { 5, 5 },
+		[28] = { 26, 130 }
+	}
+
 	SQL:Execute( "CREATE TABLE IF NOT EXISTS players_models (steamid VARCHAR UNIQUE, model_id INTEGER)" )
 	SQL:Execute( "CREATE TABLE IF NOT EXISTS players_weapons (steamid VARCHAR UNIQUE, two INTEGER, ammo_two_c INTEGER, ammo_two_r INTEGER, left INTEGER, ammo_left_c INTEGER, ammo_left_r INTEGER, right INTEGER, ammo_right_c INTEGER, ammo_right_r INTEGER)" )
 end
@@ -47,7 +54,7 @@ function SaveAndLoad:LoadWeapons( args )
 
 		local one_id = table.randomvalue( self.one_handed )
 
-		args.player:GiveWeapon( WeaponSlot.Right, Weapon( one_id, 666, 666 ) )
+		args.player:GiveWeapon( WeaponSlot.Right, Weapon( one_id, self.ammo_counts[one_id][1], self.ammo_counts[one_id][2] * 16 ) )
 	end
 end
 
