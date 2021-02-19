@@ -10,24 +10,24 @@ end
 
 function CoinFlip:PlayerChat( args )
 
-    if ( args.text:sub(1, 1) ~= "/" ) then
+        if ( args.text:sub(1, 1) ~= "/" ) then
 		return true
 	end
 
-    local cmdargs = {}
+        local cmdargs = {}
 
 	for word in string.gmatch(args.text, "[^%s]+") do
 		table.insert(cmdargs, word)
-    end
+        end
 
-    if (cmdargs[1] != self.cmd) then return false end
+        if (cmdargs[1] ~= self.cmd) then return false end
     
-    if #cmdargs > 2 or #cmdargs < 2 then
-         args.player:SendChatMessage( self.prefix, Color.White, "Пример: " .. self.cmd .. " <кол-во денег>", Color.DarkGray )
-        return false
-    end
+        if #cmdargs > 2 or #cmdargs < 2 then
+            args.player:SendChatMessage( self.prefix, Color.White, "Пример: " .. self.cmd .. " <кол-во денег>", Color.DarkGray )
+            return false
+        end
 
-    local amount = tonumber( cmdargs[2] )
+        local amount = tonumber( cmdargs[2] )
         if amount == nil then
             args.player:SendChatMessage( self.prefix, Color.White, "Это недействительная сумма денег для ставки!", Color.DarkGray )
             return false
@@ -44,8 +44,8 @@ function CoinFlip:PlayerChat( args )
         end
 
         if args.player:GetMoney() < amount then 
-        args.player:SendChatMessage( self.prefix, Color.White, "У вас недостаточно денег для ставки!", Color.DarkGray )
-        return false
+            args.player:SendChatMessage( self.prefix, Color.White, "У вас недостаточно денег для ставки!", Color.DarkGray )
+            return false
         end
 
         if math.random(0,100) < self.chance then
