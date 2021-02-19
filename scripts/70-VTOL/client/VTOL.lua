@@ -26,7 +26,7 @@ function VTOL:__init()
 	Events:Subscribe( "LocalPlayerEnterVehicle", self, self.LocalPlayerEnterVehicle )
 	Events:Subscribe( "InputPoll", self, self.LandingGear )
 	Events:Subscribe( "PreTick", self, self.Thrust )
-    Events:Subscribe( "KeyUp", self, self.KeyUp )
+        Events:Subscribe( "KeyUp", self, self.KeyUp )
 
 	Events:Subscribe( "Render", self, self.Render )
 end
@@ -77,6 +77,11 @@ function VTOL:Render()
 		if self:CheckList(PlaneVehicles, LocalVehicleModel) then
 			local size = Render:GetTextSize( self.namept, 14 )
 			local pos = Vector2( ( Render.Width - size.x ) / 2, Render.Height - size.y - 30 )
+			if LocalPlayer:GetValue( "BoostEnabled" ) then
+				pos = Vector2( ( Render.Width - size.x ) / 2, Render.Height - size.y - 30 )
+			else
+				pos = Vector2( ( Render.Width - size.x ) / 2, Render.Height - size.y - 10 )
+			end
 
 			Render:DrawText( pos + Vector2.One, self.namept, Color( 0, 0, 0, 180 ), 14 )
 			Render:DrawText( pos, self.namept, Color.White, 14 )
