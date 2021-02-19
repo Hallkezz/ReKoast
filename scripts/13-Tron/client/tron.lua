@@ -362,6 +362,7 @@ function Tron:PreTick( args )
 								if not self.collisionFired then
 									Network:Send("Collision", {
 										vehicle = pVehicle,
+										killer = vehicle
 									})
 
 									self.collisionFired = true
